@@ -2,11 +2,11 @@
 const fs = require('fs-extra');
 const glob = require('glob');  
 const shajs = require('sha.js');
-
+const pathLib = require('path');
 
 var _getFilesHash = (path) => {
-    let dmPath = path+"/";
-    let fullPath = dmPath+"/**";
+    let dmPath = pathLib.join(path, '/');
+    let fullPath = pathLib.join(dmPath, '/')+"/**";
     let files = glob.sync(fullPath);
     
     let rootHash = shajs('sha256');
@@ -60,6 +60,11 @@ process.argv.forEach(function (val, index, array) {
     
     if(index == 2){
         var path = val;
+        if(!pathLib.isAbsolute(path)){
+            console.log("Error: Invalid Path");
+            process.exit(1);
+        }
+        
         if (fs.existsSync(path)) {
             var _allHash = _getFilesHash(path);
             
